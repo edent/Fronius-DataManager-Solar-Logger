@@ -98,9 +98,8 @@ if (time() >= $sunriseTimestamp && time() <= $sunsetTimestamp)
 		fclose($solarCSV);
 	}	
 }
-else if (time() >= $sunsetTimestamp && !file_exists($today . ".png"))
-{	//	Only do this the once - if it's after sunset, and the graph hasn't yet been created.
-
+else if (time() >= $sunsetTimestamp && file_exists($today . ".csv") && !file_exists($today . ".png"))
+{	//	Only do this the once - if it's after sunset, the csv exists and the graph hasn't yet been created.
 	/*	Draw the graph	*/
 
 	//	Set up the arrays. 0-2th element initially set to 0 
