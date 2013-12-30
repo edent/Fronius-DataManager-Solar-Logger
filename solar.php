@@ -225,7 +225,7 @@ else if (time() >= $sunsetTimestamp && file_exists($currentPath . $today . ".csv
 	//	Post the image to Twitter
 	$twitterObj = new EpiTwitter($twitterConsumerKey, $twitterConsumerSecret, $twitterToken, $twitterTokenSecret);
 	 
-	$graphImage = "$currentPath . $graphFilename";
+	$graphImage = "$currentPath" . "$graphFilename";
 	$status = "Today, my solar panels generated $totalPower Wh!";
 
 	$uploadResp = $twitterObj->post('/statuses/update_with_media.json', 
