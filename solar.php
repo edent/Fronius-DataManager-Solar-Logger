@@ -50,6 +50,9 @@ $twitterTokenSecret    = "";
 //	Today's date - used for writing .csv and .png files.
 $today = date('Y-m-d', time());
 
+//	Path of the script - to ensure we're reading and writing the correct directory
+$currentPath = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+
 //	Calculate the timezone offset
 $this_timezone = new DateTimeZone(date_default_timezone_get());
 $now = new DateTime("now", $this_timezone);
@@ -93,13 +96,14 @@ if (time() >= $sunriseTimestamp && time() <= $sunsetTimestamp)
 		$solarArray = array($solarTimestamp, $solarPower, $solarDayEnergy);
 
 		//	Append the data to a CSV file named YYYY-MM-DD.csv
-		$solarCSV = fopen($today . ".csv", 'a');
+		$solarCSV = fopen($currentPath . $today . ".csv", 'a');
 		fputcsv($solarCSV, $solarArray);
 		fclose($solarCSV);
 	}	
 }
-else if (time() >= $sunsetTimestamp && file_exists($today . ".csv") && !file_exists($today . ".png"))
+else if (time() >= $sunsetTimestamp && file_exists($currentPath . $today . ".csv") && !file_exists($currentPath . $today . ".png"))
 {	//	Only do this the once - if it's after sunset, the csv exists and the graph hasn't yet been created.
+
 	/*	Draw the graph	*/
 
 	//	Set up the arrays. 0-2th element initially set to 0 
@@ -112,7 +116,7 @@ else if (time() >= $sunsetTimestamp && file_exists($today . ".csv") && !file_exi
 
 	//	Open the file, read the contents into arrays
 	//	File will be names YYYY-MM-DD.csv
-	if (($handle = fopen($today.".csv", "r")) !== FALSE) 
+	if (($handle = fopen($currentPath . $today.".csv", "r")) !== FALSE) 
 	{
 		while (($data = fgetcsv($handle, 64, ",")) !== FALSE) 
 		{
@@ -215,17 +219,17 @@ else if (time() >= $sunsetTimestamp && file_exists($today . ".csv") && !file_exi
 	//	Display the graph
 	//$graph->Stroke();
 	//	To write to a file
-	$graphFilename =  "$today.png";
-	$graph->Stroke($graphFilename);
+	$graphFilename = "$today.png";
+	$graph->Stroke($currentPath . $graphFilename);
 
 	//	Post the image to Twitter
 	$twitterObj = new EpiTwitter($twitterConsumerKey, $twitterConsumerSecret, $twitterToken, $twitterTokenSecret);
 	 
-	$graphImage = "$today.png";
+	$graphImage = "$currentPath . $graphFilename";
 	$status = "Today, my solar panels generated $totalPower Wh!";
 
 	$uploadResp = $twitterObj->post('/statuses/update_with_media.json', 
-                                    array('@media[]' => "@{$graphImage};type=png;filename={$graphImage}",
+                                    array('@media[]' => "@{$graphImage};type=png;filename={$graphFilename}",
                                     'status' => $status));
 }
 /*	All done, let's clean up after ourselves	*/
