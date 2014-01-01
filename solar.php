@@ -127,6 +127,12 @@ else if (time() >= $sunsetTimestamp && file_exists($currentPath . $today . ".csv
 		fclose($handle);
 	}
 
+	//	Calculate the total kWh generated.
+	//	Sum the readings and divide by 60. (Because we read every minute & there are 60 minutes in an hour).
+	//	Divide by 1,000 to get kWh
+	//	Only need 2 decimal places of precision
+	$kWh = round( (array_sum($currentPowerArray) / 60 / 1000), 2);
+
 	//	The current date
 	$startDayYear  = date('Y', end($timestampArray));	
 	$startDayMonth = date('m', end($timestampArray));
@@ -185,7 +191,7 @@ else if (time() >= $sunsetTimestamp && file_exists($currentPath . $today . ".csv
 	$todayDisplay = date('l jS F Y', $timestampArray[0]);
 
 	//	Setup a title for the graph
-	$graph->title->Set("$totalPower Wh Solar Power Generated - $todayDisplay - Oxford, UK");
+	$graph->title->Set("~$kWh kWh Solar Power Generated - $todayDisplay - Oxford, UK");
 	$graph->title->SetFont(FF_FONT2);	//	The largest built in font
 
 	//	Setup X-axis labels
@@ -226,7 +232,7 @@ else if (time() >= $sunsetTimestamp && file_exists($currentPath . $today . ".csv
 	$twitterObj = new EpiTwitter($twitterConsumerKey, $twitterConsumerSecret, $twitterToken, $twitterTokenSecret);
 	 
 	$graphImage = "$currentPath" . "$graphFilename";
-	$status = "Today, my solar panels generated $totalPower Wh!";
+	$status = "Today, my solar panels generated ~$kWh kWh!";
 
 	$uploadResp = $twitterObj->post('/statuses/update_with_media.json', 
                                     array('@media[]' => "@{$graphImage};type=png;filename={$graphFilename}",
