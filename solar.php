@@ -32,6 +32,9 @@ $dataManagerIP = "192.168.0.88";
 //	How many Watts the system is rated for
 $maxSolarCapacity = 4000;
 
+//	Payment rate - £/kWh
+$paymentRate = 0.1722;
+
 //	Latitude and Longitude of where the solar panels are installed.
 $latitude  = 51.1234;
 $longitude = -1.1234;
@@ -132,6 +135,8 @@ else if (time() >= $sunsetTimestamp && file_exists($currentPath . $today . ".csv
 	//	Divide by 1,000 to get kWh
 	//	Only need 2 decimal places of precision
 	$kWh = round( (array_sum($currentPowerArray) / 60 / 1000), 2);
+	$moneyMade = number_format(round(($kWh * $paymentRate) , 2),2);
+
 
 	//	The current date
 	$startDayYear  = date('Y', end($timestampArray));	
@@ -191,7 +196,7 @@ else if (time() >= $sunsetTimestamp && file_exists($currentPath . $today . ".csv
 	$todayDisplay = date('l jS F Y', $timestampArray[0]);
 
 	//	Setup a title for the graph
-	$graph->title->Set("~$kWh kWh Solar Power Generated - $todayDisplay - Oxford, UK");
+	$graph->title->Set("~$kWh kWh Solar Power Generated - $todayDisplay.\nEarning GBP ".$moneyMade." - Oxford, UK");
 	$graph->title->SetFont(FF_FONT2);	//	The largest built in font
 
 	//	Setup X-axis labels
@@ -232,7 +237,7 @@ else if (time() >= $sunsetTimestamp && file_exists($currentPath . $today . ".csv
 	$twitterObj = new EpiTwitter($twitterConsumerKey, $twitterConsumerSecret, $twitterToken, $twitterTokenSecret);
 	 
 	$graphImage = "$currentPath" . "$graphFilename";
-	$status = "Today, my solar panels generated ~$kWh kWh!";
+	$status = "Today, my solar panels generated ~$kWh kWh, earning £$moneyMade!";
 
 	$uploadResp = $twitterObj->post('/statuses/update_with_media.json', 
                                     array('@media[]' => "@{$graphImage};type=png;filename={$graphFilename}",
