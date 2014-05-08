@@ -237,7 +237,107 @@ else if (time() >= $sunsetTimestamp && file_exists($currentPath . $today . ".csv
 	$twitterObj = new EpiTwitter($twitterConsumerKey, $twitterConsumerSecret, $twitterToken, $twitterTokenSecret);
 	 
 	$graphImage = "$currentPath" . "$graphFilename";
-	$status = "Today, my solar panels generated ~$kWh kWh, earning £$moneyMade!";
+
+	switch (round($kWh)) 
+	{
+		case 0:
+			$message = "All is darkness...";
+			break;
+		case 1:
+			$message = "Pretty grim.";
+			break;
+		case 2:
+			$message = "Not a great result.";
+			break;
+		case 3:
+			$message = "Rubbish day!";
+			break;
+		case 4:
+			$message = "Too cloudy today.";
+			break;
+		case 5:
+			$message = "Not brilliant.";
+			break;
+		case 6:
+			$message = "A bit rainy.";
+			break;
+		case 7:
+			$message = "Getting there.";
+			break;
+		case 8:
+			$message = "Nice bit of sun!";
+			break;
+		case 9:
+			$message = "Our average use.";
+			break;
+		case 10:
+			$message = "Perfectly average.";
+			break;
+		case 11:
+			$message = "That's better!";
+			break;
+		case 12:
+			$message = "Pretty good result.";
+			break;
+		case 13:
+			$message = "Love the sunshine!";
+			break;
+		case 14:
+			$message = ":-)";
+			break;
+		case 15:
+			$message = "Wooo! :-)";
+			break;
+		case 16:
+			$message = "That's more like it";
+			break;
+		case 17:
+			$message = "Hot hot hot!";
+			break;
+		case 18:
+			$message = "Such sunshine ;-)";
+			break;
+		case 19:
+			$message = "Ooooh!";
+			break;
+		case 20:
+			$message = "Hotting up :-)";
+			break;
+		case 21:
+			$message = "Amazing day.";
+			break;
+		case 22:
+			$message = "Oh yeah!";
+			break;
+		case 23:
+			$message = "WooHoo!";
+			break;
+		case 24:
+			$message = "Beautiful day.";
+			break;
+		case 25:
+			$message = "Wow!";
+			break;
+		case 26:
+			$message = "Glorious day.";
+			break;
+		case 27:
+			$message = "Crikey! What a day.";
+			break;
+		case 28:
+			$message = "Here comes the sun!";
+			break;
+		case 29:
+			$message = "Wow! That's hot!";
+			break;
+		case 30:
+			$message = "Scorchio!";
+			break;
+		default:
+			$message = "Today";
+	}
+
+	$status = "$message My solar panels generated ~$kWh kWh, earning £$moneyMade!";
 
 	$uploadResp = $twitterObj->post('/statuses/update_with_media.json', 
                                     array('@media[]' => "@{$graphImage};type=png;filename={$graphFilename}",
