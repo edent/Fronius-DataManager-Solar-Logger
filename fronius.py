@@ -147,7 +147,7 @@ if datetime.datetime.now(tz_info) > (sun['sunset']) :
 
         # Creation of the actual interface, using authentication
         twitter_api = tweepy.API(auth)
-
+        status = "Today I generated "+str(kWh)+"kWh"
         upload = twitter_api.media_upload(png_file)
         media_ids = [upload.media_id_string]
         twitter_api.update_status(status=status, media_ids=media_ids, lat='51.486', long='0.107')
